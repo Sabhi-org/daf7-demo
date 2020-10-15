@@ -1,0 +1,37 @@
+{
+  "name": "daf7-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sabhi-org/daf7-demo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sabhi-org/daf7-demo/issues"
+  },
+  "homepage": "https://github.com/Sabhi-org/daf7-demo#readme",
+  "dependencies": {
+    "daf-core": "^7.0.0-beta.34",
+    "daf-did-comm": "^7.0.0-beta.34",
+    "daf-did-jwt": "^7.0.0-beta.34",
+    "daf-ethr-did": "^7.0.0-beta.34",
+    "daf-identity-manager": "^7.0.0-beta.34",
+    "daf-key-manager": "^7.0.0-beta.34",
+    "daf-libsodium": "^7.0.0-beta.34",
+    "daf-message-handler": "^7.0.0-beta.34",
+    "daf-resolver": "^7.0.0-beta.34",
+    "daf-selective-disclosure": "^7.0.0-beta.34",
+    "daf-typeorm": "^7.0.0-beta.34",
+    "daf-w3c": "^7.0.0-beta.34",
+    "daf-web-did": "^7.0.0-beta.34",
+    "sqlite3": "^5.0.0",
+    "typeorm": "^0.2.28"
+  }
+}
