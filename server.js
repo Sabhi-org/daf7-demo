@@ -1,17 +1,17 @@
-import { createAgent, IIdentityManager, IResolver, IKeyManager, IDataStore, IMessageHandler} from 'daf-core'
-import { MessageHandler } from 'daf-message-handler'
-import { KeyManager } from 'daf-key-manager'
-import { IdentityManager } from 'daf-identity-manager'
-import { DafResolver } from 'daf-resolver'
-import { JwtMessageHandler } from 'daf-did-jwt'
-import { CredentialIssuer, ICredentialIssuer, W3cMessageHandler } from 'daf-w3c'
-import { EthrIdentityProvider } from 'daf-ethr-did'
-import { WebIdentityProvider } from 'daf-web-did'
-import { DIDComm, DIDCommMessageHandler, IDIDComm } from 'daf-did-comm'
-import { SelectiveDisclosure, ISelectiveDisclosure, SdrMessageHandler } from 'daf-selective-disclosure'
-import { KeyManagementSystem, SecretBox } from 'daf-libsodium'
-import { Entities, KeyStore, IdentityStore, IDataStoreORM, DataStore, DataStoreORM } from 'daf-typeorm'
-import { createConnection } from 'typeorm'
+const { createAgent, IIdentityManager, IResolver, IKeyManager, IDataStore, IMessageHandler } = require('daf-core');
+const { MessageHandler } = require('daf-message-handler');
+const { KeyManager } = require('daf-key-manager');
+const { IdentityManager } = require('daf-identity-manager');
+const { DafResolver } = require('daf-resolver');
+const { JwtMessageHandler } = require('daf-did-jwt');
+const { CredentialIssuer, ICredentialIssuer, W3cMessageHandler } = require('daf-w3c');
+const { EthrIdentityProvider } = require('daf-ethr-did');
+const { WebIdentityProvider } = require('daf-web-did');
+const { DIDComm, DIDCommMessageHandler, IDIDComm } = require('daf-did-comm');
+const { SelectiveDisclosure, ISelectiveDisclosure, SdrMessageHandler } = require('daf-selective-disclosure');
+const { KeyManagementSystem, SecretBox } = require('daf-libsodium');
+const { Entities, KeyStore, IdentityStore, IDataStoreORM, DataStore, DataStoreORM } = require('daf-typeorm');
+const { createConnection } = require('typeorm');
 
 const infuraProjectId = '5ffc47f65c4042ce847ef66a3fa70d4c'
 const secretKey = '29739248cad1bd1a0fc4d9b75cd4d2990de535baf5caadfdf8d8f86664aa830c'
@@ -25,17 +25,7 @@ const dbConnection = createConnection({
   entities: Entities,
 })
 
-export const agent = createAgent<
-  IIdentityManager &
-  IKeyManager &
-  IDataStore &
-  IDataStoreORM &
-  IResolver &
-  IMessageHandler &
-  IDIDComm &
-  ICredentialIssuer &
-  ISelectiveDisclosure
->({
+const agent = createAgent({
   plugins: [
     new KeyManager({
       store: new KeyStore(dbConnection, new SecretBox(secretKey)),
@@ -72,4 +62,6 @@ export const agent = createAgent<
     new CredentialIssuer(),
     new SelectiveDisclosure(),
   ],
-})
+});
+
+module.exports = { agent };
