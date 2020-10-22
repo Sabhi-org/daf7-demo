@@ -1,67 +1,54 @@
-const { createAgent, IIdentityManager, IResolver, IKeyManager, IDataStore, IMessageHandler } = require('daf-core');
-const { MessageHandler } = require('daf-message-handler');
-const { KeyManager } = require('daf-key-manager');
-const { IdentityManager } = require('daf-identity-manager');
-const { DafResolver } = require('daf-resolver');
-const { JwtMessageHandler } = require('daf-did-jwt');
-const { CredentialIssuer, ICredentialIssuer, W3cMessageHandler } = require('daf-w3c');
-const { EthrIdentityProvider } = require('daf-ethr-did');
-const { WebIdentityProvider } = require('daf-web-did');
-const { DIDComm, DIDCommMessageHandler, IDIDComm } = require('daf-did-comm');
-const { SelectiveDisclosure, ISelectiveDisclosure, SdrMessageHandler } = require('daf-selective-disclosure');
-const { KeyManagementSystem, SecretBox } = require('daf-libsodium');
-const { Entities, KeyStore, IdentityStore, IDataStoreORM, DataStore, DataStoreORM } = require('daf-typeorm');
-const { createConnection } = require('typeorm');
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const axios = require('axios');
+const { agent } = require('./agent');
+const app = express();
 
-const infuraProjectId = '5ffc47f65c4042ce847ef66a3fa70d4c'
-const secretKey = '29739248cad1bd1a0fc4d9b75cd4d2990de535baf5caadfdf8d8f86664aa830c'
-const databaseFile = 'database.sqlite'
+const did = 'did:ethr:rinkeby:0x985bd59985161605af92d3800f5a6809a5df6a39';
+app.use(cors());
+app.use(bodyParser.json());
+async function identity() {
+    const id = await agent.identityManagerCreateIdentity({ provider: 'did:web' });
+    console.log(id);
+}
 
-const dbConnection = createConnection({
-  type: 'sqlite',
-  database: databaseFile,
-  synchronize: true,
-  logging: false,
-  entities: Entities,
-})
 
-const agent = createAgent({
-  plugins: [
-    new KeyManager({
-      store: new KeyStore(dbConnection, new SecretBox(secretKey)),
-      kms: {
-        local: new KeyManagementSystem(),
-      },
-    }),
-    new IdentityManager({
-      store: new IdentityStore(dbConnection),
-      defaultProvider: 'did:ethr:rinkeby',
-      providers: {
-        'did:ethr:rinkeby': new EthrIdentityProvider({
-          defaultKms: 'local',
-          network: 'rinkeby',
-          rpcUrl: 'https://rinkeby.infura.io/v3/' + infuraProjectId,
-        }),
-        'did:web': new WebIdentityProvider({
-          defaultKms: 'local',
-        }),
-      },
-    }),
-    new DafResolver({ infuraProjectId }),
-    new DataStore(dbConnection),
-    new DataStoreORM(dbConnection),
-    new MessageHandler({
-      messageHandlers: [
-        new DIDCommMessageHandler(),
-        new JwtMessageHandler(),
-        new W3cMessageHandler(),
-        new SdrMessageHandler(),
-      ],
-    }),
-    new DIDComm(),
-    new CredentialIssuer(),
-    new SelectiveDisclosure(),
-  ],
-});
+async function apiCall() {
 
-module.exports = { agent };
+    try {
+        const webIdentity = await agent.identityManagerGetOrCreateIdentity({
+            alias: 'example',
+            provider: 'did:web',
+            kms: 'local',
+        });
+
+        console.log(webIdentity);
+        console.log('***************************************************************');
+
+        const result = await agent.identityManagerAddService({
+            did: webIdentity.did,
+            service: {
+                id: 'did:web',
+                type: 'identityManagerImportIdentity',
+                serviceEndpoint: 'http://localhost:3002',
+                description: 'Handles incoming messages',
+            },
+        });
+
+        console.log(result);
+        console.log('***************************************************************');
+
+        const response = await axios.post('http://localhost:3002/agent/did', {
+            did: did
+        });
+        console.log(response.data);
+
+        // const importIdentity = await agent.identityManagerImportIdentity({ did: webIdentity.did });
+        // console.log(importIdentity);
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+apiCall();
