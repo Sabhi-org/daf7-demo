@@ -8,31 +8,26 @@ const app = express();
 const did = 'did:ethr:rinkeby:0x985bd59985161605af92d3800f5a6809a5df6a39';
 app.use(cors());
 app.use(bodyParser.json());
-async function identity() {
-    const id = await agent.identityManagerCreateIdentity({ provider: 'did:web' });
-    console.log(id);
-}
 
 
 async function apiCall() {
-
     try {
-        const webIdentity = await agent.identityManagerGetOrCreateIdentity({
+        const identity = await agent.identityManagerGetOrCreateIdentity({
             alias: 'example',
-            provider: 'did:web',
+            provider: 'did:ethr:rinkeby',
             kms: 'local',
         });
 
-        console.log(webIdentity);
+        console.log(identity);
         console.log('***************************************************************');
 
         const result = await agent.identityManagerAddService({
-            did: webIdentity.did,
+            did: identity.did,
             service: {
-                id: 'did:web',
+                id: 'did:ethr:rinkeby',
                 type: 'identityManagerImportIdentity',
-                serviceEndpoint: 'http://localhost:3002',
-                description: 'Handles incoming messages',
+                serviceEndpoint: 'http://localhost:3002/agent/did',
+                description: 'import identity...',
             },
         });
 
@@ -40,15 +35,20 @@ async function apiCall() {
         console.log('***************************************************************');
 
         const response = await axios.post('http://localhost:3002/agent/did', {
-            did: did
+            did: identity.did
         });
-        console.log(response.data);
+        // console.log(response.data);
 
-        // const importIdentity = await agent.identityManagerImportIdentity({ did: webIdentity.did });
+        // const importIdentity = await agent.identityManagerImportIdentity({ did: identity.did });
         // console.log(importIdentity);
     } catch (error) {
-        console.log(error.message);
+        console.log(error);
     }
 }
 
 apiCall();
+
+
+app.listen(5000, () => {
+    console.log(`app is live on port 5000...`);
+})
