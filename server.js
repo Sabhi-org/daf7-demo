@@ -5,7 +5,7 @@ const axios = require('axios');
 const { agent } = require('./agent');
 const app = express();
 
-// const did = 'did:ethr:rinkeby:0x857397774ac76d19c393e49c8220d85d70e543ab';
+const did = 'did:ethr:rinkeby:0x8db769ae3866186bd4ff280a1db94ce2a85a90d9';
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -47,47 +47,4 @@ async function apiCall() {
     }
 }
 
-// apiCall();
-
-
-async function createSDR() {
-    try {
-
-
-        const identity = await agent.identityManagerCreateIdentity({
-            alias: 'bob',
-            provider: 'did:ethr:rinkeby',
-            kms: 'local'
-        });
-
-        const JWT = await agent.createSelectiveDisclosureRequest({
-            data: {
-                issuer: identity.did,
-                tag: 'sdr-one',
-                claims: [{
-                    reason: 'We need it',
-                    claimType: 'name',
-                    essential: true
-                }]
-            }
-        });
-
-        console.log(JWT);
-
-        const message = await agent.handleMessage({
-            raw: JWT,
-            save: true,
-        });
-
-        console.log(message);
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-createSDR();
-
-
-// app.listen(5000, () => {
-//     console.log(`app is live on port 5000...`);
-// })
+apiCall();
