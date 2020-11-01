@@ -5,39 +5,40 @@ const axios = require('axios');
 const { agent } = require('./agent');
 const app = express();
 
-const did = 'did:ethr:rinkeby:0x985bd59985161605af92d3800f5a6809a5df6a39';
+const did = 'did:ethr:rinkeby:0x857397774ac76d19c393e49c8220d85d70e543ab';
 app.use(cors());
 app.use(bodyParser.json());
 
 
 async function apiCall() {
     try {
-        const identity = await agent.identityManagerGetOrCreateIdentity({
-            alias: 'example',
-            provider: 'did:ethr:rinkeby',
-            kms: 'local',
-        });
-
-        console.log(identity);
+        // const identity = await agent.identityManagerCreateIdentity({
+        //     alias: 'bob2',
+        //     provider: 'did:ethr:rinkeby',
+        //     kms: 'local'
+        // });
+        // console.log(identity.did);
         console.log('***************************************************************');
 
         const result = await agent.identityManagerAddService({
-            did: identity.did,
+            did: did,
             service: {
-                id: 'did:ethr:rinkeby',
-                type: 'identityManagerImportIdentity',
-                serviceEndpoint: 'http://localhost:3002/agent/did',
-                description: 'import identity...',
+                id: did,
+                type: 'import identity',
+                serviceEndpoint: 'http://localhost:3001/agent',
+            },
+            options: {
+                gas: 1000001
             },
         });
 
         console.log(result);
         console.log('***************************************************************');
 
-        const response = await axios.post('http://localhost:3002/agent/did', {
-            did: identity.did
+        const response = await axios.post('http://localhost:3001/agent/did', {
+            did: did
         });
-        // console.log(response.data);
+        console.log(response.data);
 
         // const importIdentity = await agent.identityManagerImportIdentity({ did: identity.did });
         // console.log(importIdentity);
@@ -49,6 +50,6 @@ async function apiCall() {
 apiCall();
 
 
-app.listen(5000, () => {
-    console.log(`app is live on port 5000...`);
-})
+// app.listen(5000, () => {
+//     console.log(`app is live on port 5000...`);
+// })

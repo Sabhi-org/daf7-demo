@@ -13,8 +13,16 @@ const { KeyManagementSystem, SecretBox } = require('daf-libsodium');
 const { Entities, KeyStore, IdentityStore, IDataStoreORM, DataStore, DataStoreORM } = require('daf-typeorm');
 const { createConnection } = require('typeorm');
 
-const infuraProjectId = '6e6500e4c3fb419e84acf48121f26887'
-const secretKey = '67efaf5e7a5a489f96f6a7bba506be48'
+
+/**
+ * my own infura ids
+ */
+// const infuraProjectId = 'e0e6a151b9774005950f710fb1d141f3'
+// const secretKey = '0c083214cc1c0892391ee43c3f40c5dd6065e17cd99a13e29594513d78b80488'
+// const databaseFile = 'database.sqlite'
+
+const infuraProjectId = '5ffc47f65c4042ce847ef66a3fa70d4c'
+const secretKey = '29739248cad1bd1a0fc4d9b75cd4d2990de535baf5caadfdf8d8f86664aa830c'
 const databaseFile = 'database.sqlite'
 
 const dbConnection = createConnection({
